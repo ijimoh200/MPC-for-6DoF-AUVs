@@ -1,4 +1,4 @@
-function [ui, xi, yi] = proposed(eta_ini,nv_ini,yref,nu_c,noise,Ts,Tf)
+function [ui, xi, yi] = LPVMPC1(eta_ini,nv_ini,yref,nu_c,noise,Ts,Tf)
 % This function implements the velocity form LPV-MPC1
 
 NoS = round(Tf/Ts);

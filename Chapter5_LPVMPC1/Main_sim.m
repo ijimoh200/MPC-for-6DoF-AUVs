@@ -45,7 +45,7 @@ end
 %% Simulate Controllers
 
 %Proposed LPV-MPC1 is as follows:
-[tau1, x1, y1] = proposed(eta_ini,nv_ini,yref,nu_c,noise,Ts,Tf);
+[tau1, x1, y1] = LPVMPC1(eta_ini,nv_ini,yref,nu_c,noise,Ts,Tf);
 
 %Uchihori et al. (2021) MPC algorithm is as follows:
 [tau2, x2, y2, du2] = strategyI(eta_ini,nv_ini,yref,nu_c,noise,Ts,Tf);
