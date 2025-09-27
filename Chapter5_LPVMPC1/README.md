@@ -3,7 +3,8 @@ The interdependence of the kinematic and dynamic models of marine vehicles is ex
 
 The repository contains the three controllers compared in Sections 5.2 & 5.3 of Chapter 5 of the book **Robust Model Predictive Control for Autonomous Underwater Vehicles**
 
-The following are the inputs and outputs of the function **LPVMPC1** that implements the developed Tube-based controller:
+The following are the inputs and outputs of the function **LPVMPC1** that implements the developed velocity form MPC for dynamic positioning under time-varying ocean current disturbances:
+
 Input:
       
       eta - Current position vector measurement
