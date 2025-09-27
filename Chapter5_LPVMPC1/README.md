@@ -1,10 +1,7 @@
 # LPV-MPC1-for-AUV-Positioning-Control
 The interdependence of the kinematic and dynamic models of marine vehicles is exploited to formulate a velocity form LPV-MPC algorithm to remove the tracking error at steady-state.
-Both Matlab and Python implementation of the controller are presented. 
 
-The repository contains the three controllers compared in the paper (MATLAB):
-Jimoh, I.A., Yue, H. and Küçükdemiral, I.B., 2023. Autonomous underwater vehicle positioning control-a velocity form LPV-MPC approach. IFAC-PapersOnLine, 56(2), pp.4388-4393.
-
+The repository contains the three controllers compared in Section 2 of Chapter 5 of the book **Robust Model Predictive Control for Autonomous Underwater Vehicles**
 This repository provides a MATLAB function with 6 inputs and three outputs.
 
 Input:
