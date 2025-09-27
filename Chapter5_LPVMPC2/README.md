@@ -3,6 +3,7 @@ This repository contains MATLAB implementations of the velocity-form LPVMPC2 bas
 
 The MATLAB code validates the control algorithm using the Naminow-D AUV and compares its performance with the delta input form algorithm for Case 1, which considered integrated trajectory tracking and dynamic positioning control of the AUV.
 
+The following are the input and output variables of the function **LPVMPC2** that implements the velocity form MPC for integrated trajectory tracking and dynamic positioning: 
 ```markdown
 Input:
       eta_ini - Initial position vector of the AUV
