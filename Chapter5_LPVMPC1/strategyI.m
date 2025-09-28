@@ -65,17 +65,16 @@ for k = 1:NoS
     % Apply input forces to the AUV dynamics
     x_next = solver_RK(x(:,k),Ts,tau(:,k),1*nu_c(:,k),tau_wave);
     % Add white noise to the state measurement
-    x(:,k+1) = [x_next(1:6)+noise(1:6,k); x_next(7:12)+noise(7:12,k)]; %[awgn(x_next(1:6),90); awgn(x_next(7:12),70)];
+    x(:,k+1) = [x_next(1:6)+noise(1:6,k); x_next(7:12)+noise(7:12,k)];
     % LPV Kalman for estimation
     Pn = Ak*Pn*Ak'+Qn;
-    L =  Ak*Pn*G'/(G*Pn*G'+Rn);
+    L =  Pn*G'/(G*Pn*G'+Rn);
     xhat(:,k+1) = Ak*xhat(:,k) + Bk*tau(:,k) + Bd*dn + L*(y(:,k) - G*xhat(:,k));
-    Pn = (Ak-L*G)*Pn*(Ak-L*G)' + Qn + L*Rn*L';
-    du(:,k) = (Ak*x(:,k)+Bk*tau(:,k) + dn) - xhat(:,k+1) ;
+    Pn = (eye(nx)- L*G)*Pn;
+    du(:,k) = (Ak*x(:,k)+Bk*tau(:,k) + dn) - xhat(:,k+1);
     % Updates the previous control input
     tau_ = tau(:,k);
     %sprintf('Iteration number = %d of %d',k, NoS)
-
 end
 
 xi = x;
