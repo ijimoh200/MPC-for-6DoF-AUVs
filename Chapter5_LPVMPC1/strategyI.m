@@ -70,7 +70,7 @@ for k = 1:NoS
     Pn = Ak*Pn*Ak'+Qn;
     L =  Pn*G'/(G*Pn*G'+Rn);
     xhat(:,k+1) = Ak*xhat(:,k) + Bk*tau(:,k) + Bd*dn + L*(y(:,k) - G*xhat(:,k));
-    Pn = (eye(nx)- L*G)*Pn;
+    Pn = (eye(nx)-L*G)*Pn*(eye(nx)-L*G)' + L*Rn*L';
     du(:,k) = (Ak*x(:,k)+Bk*tau(:,k) + dn) - xhat(:,k+1);
     % Updates the previous control input
     tau_ = tau(:,k);
