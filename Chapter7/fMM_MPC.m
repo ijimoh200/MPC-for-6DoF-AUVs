@@ -47,18 +47,19 @@ Taumax = kron(ones(Nu,1),tau_max);
 Taumin = kron(ones(Nu,1),tau_min);
 s = 1; % first waypoint index
 
-
-% Disturbance bounds
-d_upper = [0.05*ones(nx,1)*1; 0.4*ones(nx,1)];
-% d_upper = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, ]
+% Disturbance bounds and estimation related initialisation
+xhat0   = x0; % estimated state
+d_upper = [zeros(nx,1); zeros(nx,1)]; % initialise bounds as zeros
+% d_upper = [0.05*ones(nx,1)*1; 0.4*ones(nx,1)];
 d_p = kron(ones(N,1),abs(d_upper));
 D_lower = -(d_p);
 D_upper = (d_p);
+P0      = rand(nx*2, nx*2); % States from Ch3 considered for dist. estimation
 
 % Define dual variables
 yalmip('clear')
 lambda = sdpvar(2*length(D_lower), 1); % Lagrange multipliers for lower bounds
-n_lam = 2*length(D_lower);
+n_lam  = 2*length(D_lower);
 G2 = [eye(N*(nx+nx)); -eye(N*(nx+nx))];
 g2 = [D_upper; -D_lower];
 % Define the disturbance D*(k)
@@ -115,8 +116,22 @@ for k = 1:NoS
     xd_ref(7:12,k) = u_;
     % Update AUV model. Ocean wave is zero because it is unknown to the
     % controller:
-    [~,M, ~, Ck, Dk, gk] = Naminow_AUV(x_1,tau_,0*tau_wave(:,k));
-
+    [~,M, Jk, Ck, Dk, gk] = Naminow_AUV(x_1,tau_,0*tau_wave(:,k));
+    % Disturbance upper bound estimation and update
+    Ac = [zeros(6) Jk; zeros(6) -inv(M)*(Ck+Dk)];
+    Bc = [zeros(6); inv(M)];
+    dc = [zeros(6,1); -inv(M)*gk];
+    dn = dc*Ts;
+    Ak = Ac*Ts + eye(size(Ac,1));
+    Bk = Bc*Ts;
+    [d_upper, Pn, xhat_next] = kalman_est(x(:,k),x_1,xhat0,tau_,dn,P0,Ak,Bk);
+    P0 = Pn;
+    xhat0 = xhat_next;
+    d_p = kron(ones(N,1),abs(d_upper));
+    D_lower = -(d_p);
+    D_upper = (d_p);
+    g2 = [D_upper; -D_lower];
+    % Formulate and solve feedback min-max problem
     Sigma =kron(ones(Nu,1), Ck*x_1(7:12) + Dk*x_1(7:12)+gk);
     Mbar = kron(eye(Nu), M/Ts);
     yref_p = kron(ones(N,1), xd_ref(:,k));   % Trajectory prediction
@@ -152,16 +167,9 @@ for k = 1:NoS
     sol = optimize(constraints, cost, options);
     ctime2 = toc;
     ctime(:,k) = [ctime1; ctime2];
-    % Check for success
-    if sol.problem == 0
-        % Solution is feasible
-        U_opt = value(U);
-        D_opt = value(D_star);
-        %disp('Optimization successful!');
-    else
-        % Handle errors
-        %disp('Optimization failed!');
-    end
+    % Extract optimal control input:
+    U_opt = value(U);
+    D_opt = value(D_star);  
     Dueta(:,k) = U_opt(1:nu);
     ueta(:,k) = Dueta(:,k) + x_1(7:12);
     vdot = Dueta(:,k)/Ts;
@@ -172,7 +180,8 @@ for k = 1:NoS
     u_ = ueta(:,k);  % Updates the previous control input
     x_1 = x(:,k);
     tau_ = tau(:,k);
-    %sprintf('Iteration number = %d of %d',k, NoS)
+
+    sprintf('Iteration number = %d of %d',k, NoS)
 end
 
 ui = tau;
