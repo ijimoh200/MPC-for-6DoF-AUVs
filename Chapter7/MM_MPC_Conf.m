@@ -4,6 +4,9 @@ function [ui, xi, yi, ctime, tfinal, yrefcalc] = MM_MPC_Conf(eta_ini,nv_ini,yref
 % Jimoh, I.A. and Yue, H., 2024. Path-following model predictive control
 % for a coupled autonomous underwater vehicle. IFAC-PapersOnline.
 
+% N.B.: This implementation is classed as robust MPC with affine disturbance bounding 
+% without an explicit game-theoretic implementation to improve computational speed
+
 NoS             = round(Tf/Ts);
 nx              = 6;
 nu              = 6;
