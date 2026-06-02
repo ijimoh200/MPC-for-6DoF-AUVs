@@ -3,6 +3,9 @@ function [ui, xi, yi, ctime, tfinal, yrefcalc] = MM_MPC(x0,yref, Poq,Ts,Tf,tau_w
 % controller with the state vector used for prediction. The algorithm 
 % solves the standard min-max MPC problem.
 
+% N.B.: This implementation is classed as robust MPC with affine disturbance bounding 
+% without an explicit game-theoretic implementation to improve computational speed
+
 % Parameters and Initialization
 NoS = round(Tf/Ts);       % Number of samples
 nx = 6;                   % Number of states (position variables)
